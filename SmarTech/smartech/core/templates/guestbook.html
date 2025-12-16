@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Гостевая книга - PremiumTech{% endblock %}
+
+{% block content %}
+
+<form method="post" class="guestbook-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn">Отправить</button>
+</form>
+
+<div class="guestbook-messages">
+    {% for message in messages %}
+    <div class="guest-message">
+        <strong>{{ message.name }}</strong>
+        <p>{{ message.message }}</p>
+        <span class="date">{{ message.created_at|date:"d.m.Y H:i" }}</span>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

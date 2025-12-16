@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Статьи - PremiumTech{% endblock %}
+
+{% block content %}
+<h1>Статьи о бытовой технике</h1>
+{% for article in articles %}
+<div class="article">
+    <h2>{{ article.title }}</h2>
+    <p>{{ article.content|truncatechars:300 }}</p>
+</div>
+{% endfor %}
+{% endblock %}

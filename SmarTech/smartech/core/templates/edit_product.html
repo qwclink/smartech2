@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Редактировать товар - SmarTech{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 40px 20px; max-width: 800px;">
+    <h1>Редактирование товара</h1>
+    <p>Товар: <strong>{{ product.name }}</strong></p>
+
+    <form method="post" enctype="multipart/form-data" class="admin-form" style="background: rgba(28,28,28,0.7); padding: 30px; border-radius: 15px; border: 1px solid rgba(255,215,0,0.2);">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-cart" style="margin-top: 20px;">Сохранить изменения</button>
+    </form>
+
+    {% if product.image %}
+    <div style="margin-top: 30px; text-align:center;">
+        <h3>Текущее изображение</h3>
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width: 100%; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

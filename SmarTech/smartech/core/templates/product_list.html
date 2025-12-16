@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Каталог - PremiumTech{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Каталог товаров</h1>
+</div>
+
+
+<form method="get" class="search-form">
+    <input type="text" name="q" placeholder="Поиск по товарам..." value="{{ request.GET.q }}">
+    <button type="submit" class="btn">Поиск</button>
+</form>
+
+<div class="products-grid container" style="margin-bottom: 30px;">
+    {% for product in products %}
+    <div class="product-card">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        {% else %}
+        <div class="placeholder-img">Нет изображения</div>
+        {% endif %}
+        <h3>{{ product.name }}</h3>
+        <p>{{ product.description|truncatechars:100 }}</p>
+        <p class="price">{{ product.price }} ₽</p>
+        <div class="product-buttons">
+            <a href="{% url 'product_detail' product.id %}" class="btn">Подробнее</a>
+            <a href="{% url 'add_to_cart' product.id %}" class="btn btn-cart">В корзину</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

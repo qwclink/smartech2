@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Админ панель - SmarTech{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 40px 20px;">
+
+    <h1>Админ панель</h1>
+    <p>Добро пожаловать, {{ user.username }} (Суперпользователь)</p>
+
+    <a href="{% url 'admin:index' %}" class="btn" style="margin-bottom: 30px;">
+        Django Admin
+    </a>
+
+    <!-- ================= Добавление товара ================= -->
+    <h2>Добавить новый товар</h2>
+    <form method="post" enctype="multipart/form-data" class="admin-form">
+        {% csrf_token %}
+        {{ product_form.as_p }}
+        <button type="submit" class="btn btn-cart">Добавить товар</button>
+    </form>
+
+    <!-- ================= Заказы ================= -->
+    <h2 style="margin-top:40px;">Заказы</h2>
+
+    <div class="orders-scroll" style="max-height:700px; overflow-y:auto;">
+        {% for order in orders %}
+        <div class="order-card" style="margin-bottom: 15px;">
+
+            <div class="order-header">
+                <strong>Заказ #{{ order.id }}</strong>
+                <span class="order-status status-{{ order.status }}">
+                    {{ order.get_status_display }}
+                </span>
+            </div>
+
+            <p>Пользователь: {{ order.user.username }}</p>
+            <p>Сумма: {{ order.total_price }} ₽</p>
+
+            <ul>
+                {% for item in order.items.all %}
+                <li>{{ item.product.name }} × {{ item.quantity }}</li>
+                {% endfor %}
+            </ul>
+
+            <div class="order-actions">
+                {% if order.status != 'completed' and order.status != 'canceled' %}
+                <a href="{% url 'complete_order' order.id %}" class="btn btn-cart" style="margin-right: 10px;">
+                    Выполнить
+                </a>
+                <a href="{% url 'cancel_order' order.id %}" class="btn btn-danger">
+                    Отменить
+                </a>
+                {% endif %}
+            </div>
+
+        </div>
+        {% empty %}
+        <p>Заказов пока нет</p>
+        {% endfor %}
+    </div>
+
+    <!-- ================= Товары ================= -->
+    <h2 style="margin-top: 40px;">Управление товарами</h2>
+    <div class="products-grid" style="max-height: 600px; overflow-y: auto; padding-right:10px;">
+        {% for product in products %}
+        <div class="product-card">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+            <div class="placeholder-img">Нет изображения</div>
+            {% endif %}
+
+            <div class="product-card-content">
+                <h3>{{ product.name }}</h3>
+                <p>{{ product.description|truncatechars:100 }}</p>
+                <p class="price">{{ product.price }} ₽</p>
+                <div class="product-buttons">
+                    <a href="{% url 'edit_product' product.id %}" class="btn">Редактировать</a>
+                    <a href="{% url 'delete_product' product.id %}"
+                       class="btn btn-cart"
+                       onclick="return confirm('Удалить товар?');">
+                        Удалить
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- ================= Отзывы ================= -->
+    <h2 style="margin-top: 40px;">Отзывы пользователей</h2>
+    <div class="guestbook-scroll" style="max-height: 600px; overflow-y: auto; padding-right:10px;">
+        {% for message in messages %}
+        <div class="guest-message"
+             style="margin-bottom: 15px; padding: 15px; background: rgba(28,28,28,0.6);
+                    border-radius: 12px; border: 1px solid rgba(255,215,0,0.2);
+                    display:flex; justify-content:space-between; align-items:center;">
+
+            <div>
+                <strong style="color:#FFD700;">{{ message.name }}</strong>
+                <p style="color:#fff; margin:5px 0;">{{ message.message }}</p>
+                <span class="date" style="color:#aaa; font-size:0.85rem;">
+                    {{ message.created_at|date:"d.m.Y H:i" }}
+                </span>
+            </div>
+
+            <a href="{% url 'delete_message' message.id %}"
+               class="btn btn-cart"
+               onclick="return confirm('Удалить отзыв?');"
+                style="max-width: 100px">
+                Удалить
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

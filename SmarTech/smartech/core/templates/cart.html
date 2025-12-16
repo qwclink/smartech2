@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Корзина - PremiumTech{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Корзина</h1>
+</div>
+
+{% if cart_items %}
+<div class="products-grid container">
+    {% for item in cart_items %}
+    <div class="product-card">
+        {% if item.product.image %}
+        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+        {% else %}
+        <div class="placeholder-img">Нет изображения</div>
+        {% endif %}
+        <h3>{{ item.product.name }}</h3>
+        <p>Количество: {{ item.quantity }}</p>
+        <p class="price">{{ item.total_price|floatformat:2 }} ₽</p>
+    </div>
+    {% endfor %}
+</div>
+<div class="container">
+<a href="{% url 'create_order' %}" class="btn btn-order">Оформить заказ</a>
+</div>
+{% else %}
+<div class="container">
+<p>Корзина пуста</p>
+</div>
+{% endif %}
+{% endblock %}

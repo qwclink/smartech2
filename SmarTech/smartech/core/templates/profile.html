@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Личный кабинет – SmarTech{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 50px 20px; max-width: 1200px;">
+
+    <!-- ===== Профиль ===== -->
+    <div class="profile-header">
+        <h1>Личный кабинет</h1>
+        <p class="profile-subtitle">
+            Добро пожаловать, <strong>{{ user.username }}</strong>
+        </p>
+    </div>
+
+    <!-- ===== Заказы ===== -->
+    <section class="orders-section">
+        <h2>Мои заказы</h2>
+
+        {% if user.orders.exists %}
+        <div class="orders-grid">
+            {% for order in user.orders.all %}
+            <div class="order-card">
+
+                <div class="order-header">
+                    <span class="order-id">Заказ #{{ order.id }}</span>
+                    <span class="order-status status-{{ order.status }}">
+                        {{ order.get_status_display }}
+                    </span>
+                </div>
+
+                <div class="order-meta">
+                    <span><i class="fas fa-calendar"></i>
+                        {{ order.created_at|date:"d.m.Y H:i" }}
+                    </span>
+                    <span><i class="fas fa-wallet"></i>
+                        {{ order.total_price }} ₽
+                    </span>
+                </div>
+
+                <div class="order-items">
+                    {% for item in order.items.all %}
+                    <div class="order-item">
+                        <span class="item-name">{{ item.product.name }}</span>
+                        <span class="item-qty">× {{ item.quantity }}</span>
+                        <span class="item-price">{{ item.total_price }} ₽</span>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-orders">
+            <i class="fas fa-box-open"></i>
+            <p>У вас пока нет заказов</p>
+            <a href="{% url 'product_list' %}" class="btn btn-cart">
+                Перейти в каталог
+            </a>
+        </div>
+        {% endif %}
+    </section>
+
+</div>
+{% endblock %}
+

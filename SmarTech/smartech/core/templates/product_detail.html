@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }} - PremiumTech{% endblock %}
+
+{% block content %}
+<div class="product-detail container" style="text-align: center; max-width: 600px; margin: 30px auto;">
+    {% if product.image %}
+    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+    {% else %}
+    <div class="placeholder-img">Нет изображения</div>
+    {% endif %}
+    <div class="details">
+        <h1>{{ product.name }}</h1>
+        <p>{{ product.description }}</p>
+        <p class="price">{{ product.price }} ₽</p>
+        <div class="product-buttons">
+            <a href="{% url 'add_to_cart' product.id %}" class="btn btn-cart">Добавить в корзину</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Главная - SmarTech | Премиальная техника{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+
+{% block banners %}
+.<div class="container"></div>
+<div class="slider" style="max-width: 800px; margin: 0 auto;">
+    {% for banner in banners %}
+    <div class="slide {% if forloop.first %}active{% endif %}">
+        {% if banner.image %}
+        <img src="{{ banner.image.url }}" alt="{{ banner.title }}">
+        {% else %}
+        <div class="placeholder-img" style="height: 100%;">Баннер</div>
+        {% endif %}
+        <div class="slide-title">{{ banner.title }}</div>
+    </div>
+    {% endfor %}
+
+    <div class="slider-nav slider-prev">
+        <i class="fas fa-chevron-left"></i>
+    </div>
+    <div class="slider-nav slider-next">
+        <i class="fas fa-chevron-right"></i>
+    </div>
+
+    <div class="slider-controls">
+        {% for banner in banners %}
+        <div class="slider-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}"></div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="product-highlights">
+    <div class="section-title">
+        <h2>Эксклюзивные новинки</h2>
+    </div>
+
+    <div class="products-grid container">
+        {% for product in products %}
+        <div class="product-card floating" style="animation-delay: {{ forloop.counter0|divisibleby:2|yesno:'0s,0.5s' }}">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+            <div class="placeholder-img">Нет изображения</div>
+            {% endif %}
+            <div class="product-card-content">
+                <h3>{{ product.name }}</h3>
+                <p>{{ product.description|truncatechars:100 }}</p>
+                <p class="price">{{ product.price }} ₽</p>
+                <div class="product-buttons">
+                    <a href="{% url 'product_detail' product.id %}" class="btn">Подробнее</a>
+                    <a href="{% url 'add_to_cart' product.id %}" class="btn btn-cart">В корзину</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="features">
+    <div class="section-title">
+        <h2>Наши преимущества</h2>
+    </div>
+
+    <div class="features-grid container">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-gem"></i>
+            </div>
+            <h3>Премиальное качество</h3>
+            <p>Только оригинальная техника от ведущих мировых брендов</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h3>Гарантия 3 года</h3>
+            <p>Расширенная гарантия на всю технику в нашем магазине</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-truck"></i>
+            </div>
+            <h3>Бесплатная доставка</h3>
+            <p>Доставка премиум-класса в день заказа по всему городу</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-headset"></i>
+            </div>
+            <h3>Персональный консультант</h3>
+            <p>Индивидуальный подход к каждому клиенту</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        let currentSlide = 0;
+        const slides = $('.slide');
+        const dots = $('.slider-dot');
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+            slides.removeClass('active');
+            dots.removeClass('active');
+
+            slides.eq(index).addClass('active');
+            dots.eq(index).addClass('active');
+            currentSlide = index;
+        }
+
+        function nextSlide() {
+            let nextIndex = (currentSlide + 1) % totalSlides;
+            showSlide(nextIndex);
+        }
+
+        function prevSlide() {
+            let prevIndex = (currentSlide - 1 + totalSlides) % totalSlides;
+            showSlide(prevIndex);
+        }
+
+        // Автоматическое переключение
+        let slideInterval = setInterval(nextSlide, 5000);
+
+        // Управление кнопками
+        $('.slider-next').click(function() {
+            clearInterval(slideInterval);
+            nextSlide();
+            slideInterval = setInterval(nextSlide, 5000);
+        });
+
+        $('.slider-prev').click(function() {
+            clearInterval(slideInterval);
+            prevSlide();
+            slideInterval = setInterval(nextSlide, 5000);
+        });
+
+        // Управление точками
+        dots.click(function() {
+            clearInterval(slideInterval);
+            let index = $(this).data('index');
+            showSlide(index);
+            slideInterval = setInterval(nextSlide, 5000);
+        });
+
+        // Пауза при наведении
+        $('.slider').hover(
+            function() {
+                clearInterval(slideInterval);
+            },
+            function() {
+                slideInterval = setInterval(nextSlide, 5000);
+            }
+        );
+
+
+
+        $(window).scroll(animateOnScroll);
+        animateOnScroll(); // Инициализация
+    });
+</script>
+{% endblock %}
+
